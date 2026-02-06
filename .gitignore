@@ -1,0 +1,25 @@
+# 1. Ignore everything in the root
+/*
+
+# 2. Allow the .gitignore file itself
+!.gitignore
+
+# 3. Allow only frontend and backend folders
+!/frontend/
+!/backend/
+
+# 4. Specifically ignore .env and .venv everywhere
+# This works even inside frontend and backend because we un-ignored them above
+.env
+**/.env
+.venv/
+**/.venv/
+
+# 5. Your existing standard ignores (Dependencies, Logs, etc.)
+node_modules/
+**/node_modules/
+dist/
+build/
+*.log
+.vscode/
+.DS_Store
