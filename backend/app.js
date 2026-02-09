@@ -3,6 +3,7 @@ import authRoute from "./routes/authRoute.js";
 import serviceRoute from "./routes/serviceRoute.js";
 import servicePricingRoute from "./routes/servicePricingRoute.js";
 import washTypeRoute from "./routes/washTypeRoute.js";
+import washPackageRoute from "./routes/washPackageRoute.js";
 import vehicleCategoryRoute from "./routes/vehicleCategoryRoute.js";
 import bookingRoute from "./routes/bookingRoute.js";
 import blogRoute from "./routes/blogRoute.js";
@@ -16,6 +17,7 @@ import teamRoute from "./routes/teamRoute.js";
 import faqCategoryRoute from "./routes/faqCategoryRoute.js";
 import faqRoute from "./routes/faqRoute.js";
 import contactRoute from "./routes/contactRoute.js";
+import testimonialRoute from "./routes/testimonialRoute.js";
 
 import cors from "cors";
 
@@ -47,6 +49,8 @@ app.use("/api/service-pricing", servicePricingRoute);
 
 app.use("/api/wash-types", washTypeRoute);
 
+app.use("/api/wash-packages", washPackageRoute);
+
 app.use("/api/vehicle-categories", vehicleCategoryRoute);
 
 //booking routes
@@ -76,5 +80,8 @@ app.use("/api/faqs", faqRoute);
 
 //contact routes
 app.use("/api/contact", contactRoute);
+
+//testimonial routes
+app.use("/api/testimonials", testimonialRoute);
 
 export default app;

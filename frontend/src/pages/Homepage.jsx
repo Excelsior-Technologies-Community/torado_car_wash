@@ -5,6 +5,10 @@ import { LuBellRing } from "react-icons/lu";
 import ProgressStepper from '../components/ProgressStepper';
 import { IoMdCheckmarkCircle } from "react-icons/io";
 import { IoShieldCheckmark } from "react-icons/io5";
+import ServicesCard from '../components/services/ServicesGrid';
+import PricingPlan from '../components/PricingPlan';
+import TestimonialGrid from '../components/testimonials/TestimonialGrid';
+import TestimonialSwiper from '../components/testimonials/TestimonialSwiper';
 
 
 
@@ -12,12 +16,13 @@ import { IoShieldCheckmark } from "react-icons/io5";
 function Homepage() {
     return (
         <>
-            <div className='max-w-7xl mx-auto px-4'>
+
+            <div className=' '>
 
                 <div >
 
                     {/* Home Banner  */}
-                    <div className='flex gap-10 relative my-20 items-center '>
+                    <div className='max-w-7xl mx-auto flex gap-10 relative my-20 items-center '>
 
 
                         <div className='absolute bg-linear-to-t from-orange-600 to-orange-200 
@@ -136,126 +141,196 @@ function Homepage() {
                 </div>
 
                 {/* What We do || Services  */}
-                <div>
-
+                <div className='lg:max-w-6xl mx-auto p-10 m-10'>
+                    <div className='text-center mb-10'>
+                        <h2 className='text-orange-500 font-semibold mb-2'>What We Do</h2>
+                        <p className='text-3xl lg:text-4xl font-semibold'>Our Services</p>
+                    </div>
+                    <ServicesCard />
                 </div>
 
-                {/* Stepper */}
-                <div>
-                    <ProgressStepper />
 
 
-                </div>
 
-                {/* Case Study */}
-                <div>
+                <div className='relative bg-[#d0d0d0]  mx-auto'>
 
-                    <div className='flex items-center gap-15'>
+                    <img src="/images/home-banner-bg-02.jpg" alt=""
+                        className='absolute left-45 top-65 ' />
 
-                        <div className='flex-1 mb-5'>
-                            <h6 className='text-orange-500 font-semibold'>
-                                Case Study
-                            </h6>
 
-                            <p className='text-4xl font-semibold'>
-                                Professional Car Washing And Cleaning
+
+
+                    <div className='max-w-7xl mx-auto  h-124 p-4 '>
+
+
+
+                        <div className='text-center  '>
+                            <h2 className='text-orange-500 text-lg '
+                            >Easy Process
+                            </h2>
+
+                            <p className=' text-3xl font-semibold '>
+                                Get Our Premium Quality
+                                <br />
+                                Services Easy Steps to Follow
                             </p>
-
-                            <div className='flex items-center gap-3 mt-5'>
-                                <IoMdCheckmarkCircle className=' text-blue-500 text-2xl rounded-full ' />
-                                <p className='text-lg'>
-                                    Car Repair & Inspection
-                                </p>
-                            </div>
-
-                            <div className='flex items-center gap-3'>
-                                <IoMdCheckmarkCircle className=' text-blue-500 text-2xl rounded-full ' />
-                                <p className='text-lg'>
-                                    Car Cleaning  & Washing
-                                </p>
-                            </div>
-
-                            <button className='flex items-center gap-2 rounded-sm  bg-orange-500 p-2 text-white mt-10   '>
-                                Learn More <FaCalendarDay />
-                            </button>
-
-
                         </div>
 
-                        <div className='flex-2'>
+                        {/* Stepper */}
+                        <div className=''>
 
-                            <img src="/images/case-study-img1.jpg" alt="" />
 
-                        </div>
-
-                        <div className='flex-1 flex flex-col gap-6'>
-
-                            <div className='flex items-center gap-2'>
-
-                                <div>
-                                    <IoShieldCheckmark className='text-4xl' />
-                                </div>
-
-                                <div>
-
-                                    <h6 className='text-xl font-semibold'>
-                                        Safety Materials
-                                    </h6>
-
-                                    <p className='text-gray-500'>
-                                        Ask especially collecting terminated may son expression collecting lorem.
-                                    </p>
-
-                                </div>
-
+                            <div>
+                                <ProgressStepper />
                             </div>
 
-                            <div className='flex items-center gap-2'>
-
-                                <div>
-                                    <FaTools  className='text-4xl' />
-                                </div>
-
-                                <div>
-
-                                    <h6 className='text-xl font-semibold'>
-                                        Modern Equipment
-                                    </h6>
-
-                                    <p className='text-gray-500'>
-                                        Ask especially collecting terminated may son expression collecting lorem.
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <div className='flex items-center gap-2'>
-
-                                <div>
-                                    <FaHandshake className='text-4xl' />
-                                </div>
-
-                                <div>
-
-                                    <h6 className='text-xl font-semibold'>
-                                        Caring Service
-                                    </h6>
-
-                                    <p className='text-gray-500'>
-                                        Ask especially collecting terminated may son expression collecting lorem.
-                                    </p>
-
-                                </div>
-
-                            </div>
 
                         </div>
 
                     </div>
 
+                    {/* Case Study */}
+
+                    <div className='max-w-6xl mx-auto absolute bg-white right-50 left-60  p-8 top-80  rounded-lg  shadow-lg'>
+
+
+                        <div className='  '>
+
+
+                            <div className='flex items-center gap-15'>
+
+                                <div className='flex-1 mb-5'>
+                                    <h6 className='text-orange-500 font-semibold'>
+                                        Case Study
+                                    </h6>
+
+                                    <p className='text-4xl font-semibold'>
+                                        Professional Car Washing And Cleaning
+                                    </p>
+
+                                    <div className='flex items-center gap-3 mt-5'>
+                                        <IoMdCheckmarkCircle className=' text-blue-500 text-2xl rounded-full ' />
+                                        <p className='text-lg'>
+                                            Car Repair & Inspection
+                                        </p>
+                                    </div>
+
+                                    <div className='flex items-center gap-3'>
+                                        <IoMdCheckmarkCircle className=' text-blue-500 text-2xl rounded-full ' />
+                                        <p className='text-lg'>
+                                            Car Cleaning  & Washing
+                                        </p>
+                                    </div>
+
+                                    <button className='flex items-center gap-2 rounded-sm  bg-orange-500 p-2 text-white mt-10   '>
+                                        Learn More <FaCalendarDay />
+                                    </button>
+
+
+                                </div>
+
+                                <div className='flex-2'>
+
+                                    <img src="/images/case-study-img1.jpg" alt="" />
+
+                                </div>
+
+                                <div className='flex-1 flex flex-col gap-10'>
+
+                                    <div className='flex items-center gap-5'>
+
+                                        <div>
+                                            <IoShieldCheckmark className='text-4xl' />
+                                        </div>
+
+                                        <div>
+
+                                            <h6 className='text-xl font-semibold'>
+                                                Safety Materials
+                                            </h6>
+
+                                            <p className='text-gray-500'>
+                                                Ask especially collecting terminated may son expression collecting lorem.
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div className='flex items-center gap-5'>
+
+                                        <div>
+                                            <FaTools className='text-4xl' />
+                                        </div>
+
+                                        <div>
+
+                                            <h6 className='text-xl font-semibold'>
+                                                Modern Equipment
+                                            </h6>
+
+                                            <p className='text-gray-500'>
+                                                Ask especially collecting terminated may son expression collecting lorem.
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div className='flex items-center gap-5'>
+
+                                        <div>
+                                            <FaHandshake className='text-4xl' />
+                                        </div>
+
+                                        <div>
+
+                                            <h6 className='text-xl font-semibold'>
+                                                Caring Service
+                                            </h6>
+
+                                            <p className='text-gray-500'>
+                                                Ask especially collecting terminated may son expression collecting lorem.
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+
                 </div>
+
+                {/* Pricong Plan */}
+                <div className='mt-90'>
+
+                    <PricingPlan />
+
+                </div>
+
+                {/* Testimonials  */}
+                <div className=''>
+
+                    <TestimonialSwiper />
+
+                </div>
+
+
+
+
+
+
+
 
 
 
