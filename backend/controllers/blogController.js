@@ -3,7 +3,7 @@ import { getPagination } from "../utils/pagination.js";
 
 export const createBlog = async (req, res) => {
   try {
-    const { title, content, author_id, tags, is_published = 0 } = req.body;
+    const { title, content, author_id, category_id, tags, is_published = 0 } = req.body;
 
     const featured_image = req.file ? req.file.filename : null;
     let slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -12,21 +12,19 @@ export const createBlog = async (req, res) => {
       return res.status(400).json({ message: "title and author_id are required" });
     }
 
-    // Check if author exists
     const [users] = await pool.query("SELECT id FROM users WHERE id = ?", [author_id]);
     if (users.length === 0) {
       return res.status(400).json({ message: "Invalid author_id. User does not exist." });
     }
 
-    // Generate unique slug
     const [existingSlugs] = await pool.query("SELECT slug FROM blogs WHERE slug LIKE ?", [`${slug}%`]);
     if (existingSlugs.length > 0) {
       slug = `${slug}-${Date.now()}`;
     }
 
     const [results] = await pool.query(
-      `INSERT INTO blogs(title, slug, content, author_id, featured_image, is_published) VALUES(?,?,?,?,?,?) `,
-      [title, slug, content, author_id, featured_image, is_published],
+      `INSERT INTO blogs(title, slug, content, author_id, category_id, featured_image, is_published) VALUES(?,?,?,?,?,?,?) `,
+      [title, slug, content, author_id, category_id || null, featured_image, is_published],
     );
 
     const blogId = results.insertId;
@@ -34,7 +32,6 @@ export const createBlog = async (req, res) => {
     if (tags && tags.length) {
       let tagArray = Array.isArray(tags) ? tags : JSON.parse(tags);
       
-      // Check if all tags exist
       const [existingTags] = await pool.query(
         `SELECT id FROM tags WHERE id IN (${tagArray.map(() => '?').join(',')})`,
         tagArray
@@ -59,18 +56,56 @@ export const createBlog = async (req, res) => {
 
 export const getBlogs = async (req, res) => {
   try {
-    const { page = 1, limit = 6 } = req.query;
+    const { page = 1, limit = 6, category, tags, search } = req.query;
     const { offset } = getPagination(page, limit);
 
+    let whereConditions = ['b.is_published = 1'];
+    let params = [];
+    let joins = ' LEFT JOIN blog_categories bc ON b.category_id = bc.id';
+
+    if (category) {
+      whereConditions.push('bc.slug = ?');
+      params.push(category);
+    }
+
+    if (tags) {
+      const tagArray = tags.split(',');
+      joins += ' LEFT JOIN blog_tags bt ON b.id = bt.blog_id LEFT JOIN tags t ON bt.tag_id = t.id';
+      whereConditions.push(`t.slug IN (${tagArray.map(() => '?').join(',')})`);
+      params.push(...tagArray);
+    }
+
+    if (search) {
+      whereConditions.push('(b.title LIKE ? OR b.content LIKE ?)');
+      params.push(`%${search}%`, `%${search}%`);
+    }
+
+    const whereClause = whereConditions.length ? `WHERE ${whereConditions.join(' AND ')}` : '';
+
     const [blogs] = await pool.query(
-      `SELECT * FROM blogs
-       WHERE is_published = 1
-       ORDER BY created_at DESC
+      `SELECT DISTINCT b.*, bc.name as category_name, bc.slug as category_slug
+       FROM blogs b
+       ${joins}
+       ${whereClause}
+       ORDER BY b.created_at DESC
        LIMIT ? OFFSET ?`,
-      [Number(limit), offset],
+      [...params, Number(limit), offset],
     );
 
-    const [[{ total }]] = await pool.query("SELECT COUNT(*) AS total FROM blogs WHERE is_published = 1");
+    const [[{ total }]] = await pool.query(
+      `SELECT COUNT(DISTINCT b.id) AS total FROM blogs b ${joins} ${whereClause}`,
+      params
+    );
+
+    for (let blog of blogs) {
+      const [blogTags] = await pool.query(
+        `SELECT t.id, t.name, t.slug FROM tags t
+         JOIN blog_tags bt ON bt.tag_id = t.id
+         WHERE bt.blog_id = ?`,
+        [blog.id]
+      );
+      blog.tags = blogTags;
+    }
 
     res.json({
       data: blogs,
@@ -78,6 +113,7 @@ export const getBlogs = async (req, res) => {
         total,
         page: Number(page),
         limit: Number(limit),
+        totalPages: Math.ceil(total / limit)
       },
     });
   } catch (error) {
@@ -90,7 +126,14 @@ export const getBlogById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const [blogs] = await pool.query(`SELECT * FROM blogs WHERE id = ?`, [id]);
+    const [blogs] = await pool.query(
+      `SELECT b.*, bc.name as category_name, bc.slug as category_slug, u.name as author_name
+       FROM blogs b
+       LEFT JOIN blog_categories bc ON b.category_id = bc.id
+       LEFT JOIN users u ON b.author_id = u.id
+       WHERE b.id = ? OR b.slug = ?`,
+      [id, id]
+    );
 
     if (blogs.length === 0) {
       return res.status(404).json({ message: "Blog Not Found" });
@@ -99,13 +142,19 @@ export const getBlogById = async (req, res) => {
     const blog = blogs[0];
 
     const [tags] = await pool.query(
-      `SELECT t.id, t.name FROM tags t
+      `SELECT t.id, t.name, t.slug FROM tags t
        JOIN blog_tags bt ON bt.tag_id = t.id
        WHERE bt.blog_id = ?`,
-      [id],
+      [blog.id],
+    );
+
+    const [images] = await pool.query(
+      `SELECT image_path FROM blog_images WHERE blog_id = ? ORDER BY display_order`,
+      [blog.id]
     );
 
     blog.tags = tags;
+    blog.images = images.map(img => img.image_path);
     return res.json(blog);
   } catch (error) {
     console.log(error);
@@ -115,11 +164,10 @@ export const getBlogById = async (req, res) => {
 
 export const updateBlog = async (req, res) => {
   const { id } = req.params;
-  const { title, content, tags, is_published } = req.body;
+  const { title, content, category_id, tags, is_published } = req.body;
   const featured_image = req.file ? req.file.filename : null;
 
   try {
-    // Get current blog data
     const [currentBlog] = await pool.query("SELECT * FROM blogs WHERE id = ?", [id]);
     if (currentBlog.length === 0) {
       return res.status(404).json({ message: "Blog not found" });
@@ -132,7 +180,6 @@ export const updateBlog = async (req, res) => {
     if (title) {
       let slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       
-      // Check for duplicate slug (excluding current blog)
       const [existingSlugs] = await pool.query(
         "SELECT slug FROM blogs WHERE slug LIKE ? AND id != ?", 
         [`${slug}%`, id]
@@ -148,6 +195,11 @@ export const updateBlog = async (req, res) => {
     if (content !== undefined) {
       updates.push("content = ?");
       params.push(content);
+    }
+
+    if (category_id !== undefined) {
+      updates.push("category_id = ?");
+      params.push(category_id || null);
     }
 
     if (featured_image) {

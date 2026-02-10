@@ -1,34 +1,20 @@
-import pool from "../config/db.js";
+import { Cart } from "../models/index.js";
 
 export const addToCart = async (req, res) => {
   try {
     const { product_id, quantity = 1 } = req.body;
     const user_id = req.user.id;
 
-    await pool.query(
-      `INSERT INTO carts (user_id, product_id, quantity) 
-       VALUES (?, ?, ?) 
-       ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)`,
-      [user_id, product_id, quantity]
-    );
-
-    const [cart] = await pool.query(
-      `SELECT c.*, p.name, p.price 
-       FROM carts c 
-       JOIN products p ON c.product_id = p.id 
-       WHERE c.user_id = ? AND c.product_id = ?`,
-      [user_id, product_id]
-    );
+    const result = await Cart.addToCart(user_id, product_id, quantity);
 
     return res.status(201).json({
       success: true,
-      data: cart[0]
+      message: result.message || "Product added to cart"
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Server Error",
-      error: error.message
+      message: error.message
     });
   }
 };
@@ -36,14 +22,7 @@ export const addToCart = async (req, res) => {
 export const getCart = async (req, res) => {
   try {
     const user_id = req.user.id;
-
-    const [items] = await pool.query(
-      `SELECT c.*, p.name, p.price, (c.quantity * p.price) as total
-       FROM carts c 
-       JOIN products p ON c.product_id = p.id 
-       WHERE c.user_id = ?`,
-      [user_id]
-    );
+    const items = await Cart.getUserCart(user_id);
 
     return res.json({
       success: true,
@@ -52,8 +31,7 @@ export const getCart = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Server Error",
-      error: error.message
+      message: error.message
     });
   }
 };
@@ -64,28 +42,16 @@ export const updateCartItem = async (req, res) => {
     const { quantity } = req.body;
     const user_id = req.user.id;
 
-    await pool.query(
-      `UPDATE carts SET quantity = ? WHERE id = ? AND user_id = ?`,
-      [quantity, id, user_id]
-    );
-
-    const [cart] = await pool.query(
-      `SELECT c.*, p.name, p.price 
-       FROM carts c 
-       JOIN products p ON c.product_id = p.id 
-       WHERE c.id = ?`,
-      [id]
-    );
+    await Cart.updateQuantity(user_id, id, quantity);
 
     return res.json({
       success: true,
-      data: cart[0]
+      message: "Cart updated"
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Server Error",
-      error: error.message
+      message: error.message
     });
   }
 };
@@ -95,10 +61,7 @@ export const removeFromCart = async (req, res) => {
     const { id } = req.params;
     const user_id = req.user.id;
 
-    await pool.query(
-      `DELETE FROM carts WHERE id = ? AND user_id = ?`,
-      [id, user_id]
-    );
+    await Cart.removeFromCart(user_id, id);
 
     return res.json({
       success: true,
@@ -107,8 +70,7 @@ export const removeFromCart = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Server Error",
-      error: error.message
+      message: error.message
     });
   }
 };
@@ -116,8 +78,7 @@ export const removeFromCart = async (req, res) => {
 export const clearCart = async (req, res) => {
   try {
     const user_id = req.user.id;
-
-    await pool.query(`DELETE FROM carts WHERE user_id = ?`, [user_id]);
+    await Cart.clearCart(user_id);
 
     return res.json({
       success: true,
@@ -126,8 +87,7 @@ export const clearCart = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Server Error",
-      error: error.message
+      message: error.message
     });
   }
 };

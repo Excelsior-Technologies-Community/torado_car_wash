@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import { Service } from "../models/index.js";
 import { deleteFile } from "../utils/fileUtils.js";
 
 export const createService = async (req, res) => {
@@ -11,13 +11,7 @@ export const createService = async (req, res) => {
       return res.status(400).json({ message: "Name is required" });
     }
 
-    const [result] = await pool.query(
-      "INSERT INTO services (name, icon, image, description, problem_name, problem_description) VALUES (?, ?, ?, ?, ?, ?)",
-      [name, icon, image, description, problem_name, problem_description]
-    );
-
-    res.status(201).json({
-      id: result.insertId,
+    const id = await Service.create({
       name,
       icon,
       image,
@@ -25,6 +19,8 @@ export const createService = async (req, res) => {
       problem_name,
       problem_description
     });
+
+    res.status(201).json({ id, name, icon, image, description, problem_name, problem_description });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to create service" });
@@ -33,9 +29,7 @@ export const createService = async (req, res) => {
 
 export const getAllServices = async (req, res) => {
   try {
-    const [services] = await pool.query(
-      "SELECT * FROM services WHERE is_active = TRUE"
-    );
+    const services = await Service.findAll({ is_active: true });
     res.json(services);
   } catch (error) {
     console.error(error);
@@ -46,16 +40,13 @@ export const getAllServices = async (req, res) => {
 export const getSingleService = async (req, res) => {
   try {
     const { id } = req.params;
-    const [services] = await pool.query(
-      "SELECT * FROM services WHERE id = ? AND is_active = TRUE",
-      [id]
-    );
+    const service = await Service.findById(id);
 
-    if (services.length === 0) {
+    if (!service || !service.is_active) {
       return res.status(404).json({ message: "Service not found" });
     }
 
-    res.json(services[0]);
+    res.json(service);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch service" });
@@ -69,41 +60,33 @@ export const updateService = async (req, res) => {
     const image = req.files?.image?.[0]?.filename;
     const icon = req.files?.icon?.[0]?.filename;
 
-    const [currentService] = await pool.query(
-      "SELECT image, icon FROM services WHERE id = ?",
-      [id]
-    );
+    const currentService = await Service.findById(id);
 
-    if (currentService.length === 0) {
+    if (!currentService) {
       return res.status(404).json({ message: "Service not found" });
     }
 
-    const updates = [];
-    const params = [];
+    const updates = {};
 
-    if (name) { updates.push("name = ?"); params.push(name); }
-    if (description !== undefined) { updates.push("description = ?"); params.push(description); }
-    if (problem_name !== undefined) { updates.push("problem_name = ?"); params.push(problem_name); }
-    if (problem_description !== undefined) { updates.push("problem_description = ?"); params.push(problem_description); }
+    if (name) updates.name = name;
+    if (description !== undefined) updates.description = description;
+    if (problem_name !== undefined) updates.problem_name = problem_name;
+    if (problem_description !== undefined) updates.problem_description = problem_description;
     
     if (image) {
-      updates.push("image = ?");
-      params.push(image);
-      if (currentService[0].image) deleteFile(currentService[0].image);
+      updates.image = image;
+      if (currentService.image) deleteFile(currentService.image);
     }
     if (icon) {
-      updates.push("icon = ?");
-      params.push(icon);
-      if (currentService[0].icon) deleteFile(currentService[0].icon);
+      updates.icon = icon;
+      if (currentService.icon) deleteFile(currentService.icon);
     }
 
-    if (updates.length === 0) {
+    if (Object.keys(updates).length === 0) {
       return res.status(400).json({ message: "No fields to update" });
     }
 
-    params.push(id);
-    await pool.query(`UPDATE services SET ${updates.join(", ")} WHERE id = ?`, params);
-
+    await Service.update(id, updates);
     res.json({ message: "Service updated successfully" });
   } catch (error) {
     console.error(error);
@@ -114,15 +97,7 @@ export const updateService = async (req, res) => {
 export const deleteService = async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await pool.query(
-      "UPDATE services SET is_active = FALSE WHERE id = ?",
-      [id]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Service not found" });
-    }
-
+    await Service.softDelete(id);
     res.json({ message: "Service deleted successfully" });
   } catch (error) {
     console.error(error);

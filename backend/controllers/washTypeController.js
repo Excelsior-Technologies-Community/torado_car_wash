@@ -34,8 +34,8 @@ export const getAllWashTypes = async (req, res) => {
     for (let washType of washTypes) {
       const [features] = await pool.query(
         `SELECT f.* FROM features f
-         JOIN wash_type_features wtf ON f.id = wtf.feature_id
-         WHERE wtf.wash_type_id = ? AND f.is_active = TRUE`,
+        JOIN wash_type_features wtf ON f.id = wtf.feature_id
+        WHERE wtf.wash_type_id = ? AND f.is_active = TRUE`,
         [washType.id],
       );
       washType.features = features;
