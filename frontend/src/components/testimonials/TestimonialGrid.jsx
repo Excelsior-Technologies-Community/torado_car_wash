@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import axios from 'axios'
+import SingleTestimonialSwiper from './SingleTestimonialSwiper'
 
 function TestimonialGrid() {
     const [testimonials, setTestimonials] = useState([])
@@ -26,6 +27,8 @@ function TestimonialGrid() {
 
     return (
         <div className='bg-gray-50 py-16'>
+
+            <SingleTestimonialSwiper />
 
             <div className='relative  bg-[#681515] lg:min-h-84 mb-12'>
 

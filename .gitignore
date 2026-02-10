@@ -5,6 +5,11 @@
 !.gitignore
 
 # 3. Allow only frontend and backend folders
+md/
+**/md
+sql/
+**/sql
+**/test-system.js
 !/frontend/
 !/backend/
 

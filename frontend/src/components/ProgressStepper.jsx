@@ -27,10 +27,10 @@ export default function ProgressStepper() {
     }, []);
 
     return (
-        <div className="w-full flex justify-center py-12">
+        <div className="w-full flex justify-center py-14">
             <div className="relative w-3/4">
                 {/* Base line */}
-                <div className="absolute top-1/3 left-0 right-0 h-1 bg-gray-300 -translate-y-1/2" />
+                <div className="absolute top-1/3 left-0 right-0 h-1 w-[90%] mx-auto bg-gray-300 -translate-y-1/2" />
 
                 {/* Moving dot */}
                 <div

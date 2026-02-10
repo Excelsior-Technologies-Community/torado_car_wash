@@ -5,6 +5,7 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import { FaQuoteRight, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import axios from 'axios'
+import BrandSwiper from '../BrandSwiper'
 
 function TestimonialSwiper() {
     const [testimonials, setTestimonials] = useState([])
@@ -72,6 +73,7 @@ function TestimonialSwiper() {
                     ))}
                 </Swiper>
             </div>
+            <BrandSwiper />
         </div>
     )
 }

@@ -32,9 +32,9 @@ function Header() {
                                 <span className="cursor-pointer">Pages</span>
                                 <div className="absolute left-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-120">
                                     <div className="w-48 bg-white rounded-md shadow-lg border py-2">
-                                        <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">About Us</Link>
+                                        <Link to="/aboutus" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">About Us</Link>
                                         <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Team</Link>
-                                        <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Testimonials</Link>
+                                        <Link to="/testimonials" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Testimonials</Link>
                                         <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Why Choose Us?</Link>
                                         <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Book Appointment</Link>
                                         <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Pricing Plans</Link>
@@ -73,11 +73,10 @@ function Header() {
                                 <span className="cursor-pointer">Blog</span>
                                 <div className="absolute left-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-120">
                                     <div className="w-48 bg-white rounded-md shadow-lg border py-2">
-                                        <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Blog Left Sidebar</Link>
-                                        <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Blog Right Sidebar</Link>
-                                        <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Blog Grid</Link>
-                                        <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Categories</Link>
-                                        <Link to="/" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Testimonials</Link>
+                                        <Link to="/blogs?view=left-sidebar" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Blog Left Sidebar</Link>
+                                        <Link to="/blogs?view=right-sidebar" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Blog Right Sidebar</Link>
+                                        <Link to="/blogs?view=grid" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">Blog Grid</Link>
+                                        <Link to="/blogs" className="block px-4 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-100">All Blogs</Link>
                                     </div>
                                 </div>
                             </li>

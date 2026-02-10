@@ -9,9 +9,8 @@ import ServicesCard from '../components/services/ServicesGrid';
 import PricingPlan from '../components/PricingPlan';
 import TestimonialGrid from '../components/testimonials/TestimonialGrid';
 import TestimonialSwiper from '../components/testimonials/TestimonialSwiper';
-
-
-
+import BlogSwiper from "../components/blog/BlogSwiper"
+import BrandSwiper from '../components/BrandSwiper';
 
 function Homepage() {
     return (
@@ -152,10 +151,10 @@ function Homepage() {
 
 
 
-                <div className='relative bg-[#d0d0d0]  mx-auto'>
+                <div className='relative bg-[#f5f3ee]  mx-auto py-6'>
 
                     <img src="/images/home-banner-bg-02.jpg" alt=""
-                        className='absolute left-45 top-65 ' />
+                        className='absolute left-45 top-65 opacity-50' />
 
 
 
@@ -325,10 +324,33 @@ function Homepage() {
 
                 </div>
 
+                {/* Blog Swiper */}
+                <div className='my-5'>
+
+                    <div className='text-center '>
+
+                        <h6 className='text-orange-500 '>
+                            From Our Blogs
+                        </h6>
+
+                        <h2 className='font-semibold text-4xl'>
+                            We’re Connected to Help
+                            <br />
+                            You All the Time
+                        </h2>
 
 
+                    </div>
+
+                    <div>
+                        <BlogSwiper />
+                    </div>
+
+                </div>
 
 
+                {/* BrandSwiper */}
+                <BrandSwiper />
 
 
 
