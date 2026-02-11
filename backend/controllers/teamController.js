@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import { getPagination } from "../utils/pagination.js";
 
 export const createTeamMember = async (req, res) => {
   try {
@@ -33,10 +34,27 @@ export const createTeamMember = async (req, res) => {
 
 export const getAllTeamMembers = async (req, res) => {
   try {
+    const { page = 1, limit = 8 } = req.query;
+    const { limit: queryLimit, offset } = getPagination(page, limit);
+
     const [teamMembers] = await pool.query(
-      "SELECT * FROM team_members WHERE is_active = TRUE ORDER BY display_order ASC, created_at DESC"
+      "SELECT * FROM team_members WHERE is_active = TRUE ORDER BY display_order ASC, created_at DESC LIMIT ? OFFSET ?",
+      [queryLimit, offset]
     );
-    res.json(teamMembers);
+
+    const [[{ total }]] = await pool.query(
+      "SELECT COUNT(*) as total FROM team_members WHERE is_active = TRUE"
+    );
+
+    res.json({
+      data: teamMembers,
+      pagination: {
+        page: Number(page),
+        limit: queryLimit,
+        total,
+        totalPages: Math.ceil(total / queryLimit)
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch team members" });

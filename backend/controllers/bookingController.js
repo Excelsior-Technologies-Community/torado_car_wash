@@ -1,4 +1,6 @@
 import { Booking, Service, VehicleCategory } from "../models/index.js";
+import { sendBookingConfirmation } from '../config/mail.js';
+import db from '../config/db.js';
 
 export const createBooking = async (req, res) => {
   try {
@@ -18,6 +20,37 @@ export const createBooking = async (req, res) => {
       booking_date,
       booking_time
     );
+
+    // Fetch booking details for email
+    const [bookingDetails] = await db.execute(`
+      SELECT 
+        b.id, b.booking_date, b.booking_time, b.status,
+        u.name as user_name, u.email as user_email,
+        s.title as service_name,
+        vc.name as vehicle_category,
+        svp.final_price as price
+      FROM bookings b
+      JOIN users u ON b.user_id = u.id
+      JOIN services s ON b.service_id = s.id
+      JOIN vehicle_categories vc ON b.vehicle_category_id = vc.id
+      JOIN service_vehicle_pricing svp ON svp.service_id = s.id AND svp.vehicle_category_id = vc.id
+      WHERE b.id = ?
+    `, [result.bookingId]);
+
+    if (bookingDetails.length > 0) {
+      const booking = bookingDetails[0];
+      await sendBookingConfirmation({
+        bookingId: booking.id,
+        userName: booking.user_name,
+        userEmail: booking.user_email,
+        serviceName: booking.service_name,
+        vehicleCategory: booking.vehicle_category,
+        bookingDate: new Date(booking.booking_date).toLocaleDateString(),
+        bookingTime: booking.booking_time,
+        price: booking.price,
+        status: booking.status
+      });
+    }
 
     res.status(201).json(result);
   } catch (error) {

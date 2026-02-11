@@ -7,4 +7,5 @@ export { servicesApi } from './services';
 export { vehicleCategoriesApi } from './vehicleCategories';
 export { washTypesApi } from './washTypes';
 export { blogsApi } from './blogs';
+export { teamApi } from './team';
 export { default as api } from './axios';

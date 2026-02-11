@@ -150,7 +150,7 @@ function Homepage() {
 
 
 
-
+                {/* Double Div || Stepper & case STudy */}
                 <div className='relative bg-[#f5f3ee]  mx-auto py-6'>
 
                     <img src="/images/home-banner-bg-02.jpg" alt=""

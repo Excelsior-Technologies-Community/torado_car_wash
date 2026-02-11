@@ -18,6 +18,7 @@ import faqCategoryRoute from "./routes/faqCategoryRoute.js";
 import faqRoute from "./routes/faqRoute.js";
 import contactRoute from "./routes/contactRoute.js";
 import testimonialRoute from "./routes/testimonialRoute.js";
+import newsletterRoute from "./routes/newsletterRoute.js";
 
 import cors from "cors";
 
@@ -83,5 +84,8 @@ app.use("/api/contact", contactRoute);
 
 //testimonial routes
 app.use("/api/testimonials", testimonialRoute);
+
+//newsletter routes
+app.use("/api/newsletter", newsletterRoute);
 
 export default app;
