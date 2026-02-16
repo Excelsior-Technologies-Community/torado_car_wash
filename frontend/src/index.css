@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+html, body, #root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  min-width: 0;
+}
+
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}

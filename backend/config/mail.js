@@ -109,3 +109,27 @@ export const sendBookingConfirmation = async (bookingData) => {
 
   return await transporter.sendMail(mailOptions);
 };
+
+export const sendPasswordResetEmail = async ({ to, name, resetLink }) => {
+  const mailOptions = {
+    from: process.env.MAIL_USER,
+    to,
+    subject: 'Reset Your Password - Torado Car Wash',
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
+        <h2>Password Reset Request</h2>
+        <p>Hello ${name || 'User'},</p>
+        <p>We received a request to reset your password.</p>
+        <p>
+          <a href="${resetLink}" style="display:inline-block;padding:10px 16px;background:#f97316;color:#fff;text-decoration:none;border-radius:6px;">
+            Reset Password
+          </a>
+        </p>
+        <p>This link expires in 15 minutes.</p>
+        <p>If you did not request this, you can ignore this email.</p>
+      </div>
+    `,
+  };
+
+  return transporter.sendMail(mailOptions);
+};

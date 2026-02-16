@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { teamApi } from '../api';
+import { Link } from 'react-router-dom';
 import { FaFacebookF, FaLinkedinIn, FaInstagram, FaTwitter, FaCalendarDay } from 'react-icons/fa';
 import TestimonialSwiper from '../components/testimonials/TestimonialSwiper';
 
@@ -17,10 +18,12 @@ const TeamPage = () => {
     setLoading(true);
     try {
       const response = await teamApi.getTeamMembers({ page: currentPage, limit: 8 });
-      setTeamMembers(response.data.data);
-      setPagination(response.data.pagination);
+      setTeamMembers(response.data || []);
+      setPagination(response.pagination || {});
     } catch (error) {
       console.error('Error fetching team members:', error);
+      setTeamMembers([]);
+      setPagination({});
     } finally {
       setLoading(false);
     }
@@ -39,18 +42,18 @@ const TeamPage = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-10">
 
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 mb-8">
           <div>
             <h6 className="text-orange-500 text-sm font-medium mb-2">Our Team</h6>
-            <h2 className="text-4xl font-bold">Meet Our Professional, Skilled<br />and Dedicated Staff</h2>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Meet Our Professional, Skilled<br />and Dedicated Staff</h2>
           </div>
-          <button className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition">
+          <Link to="/contactus" className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition">
             Contact Us
-          </button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {teamMembers.map((member) => (
+          {teamMembers && teamMembers.length > 0 && teamMembers.map((member) => (
             <div key={member.id} className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition group">
               <div className="relative overflow-hidden">
                 <img
@@ -127,20 +130,20 @@ const TeamPage = () => {
 
       </div>
 
-      <div className='relative  bg-[#681515] lg:min-h-84 my-12'>
+      <div className='relative bg-[#681515] my-12 overflow-hidden'>
 
         <img src="/images/home-banner-bg-02.jpg" alt=""
-          className='absolute w-15 right-90 bottom-10 animate-[bounce_3s_ease-in-out_infinite]'
+          className='hidden lg:block absolute w-12 right-20 bottom-6 animate-[bounce_3s_ease-in-out_infinite]'
         />
 
         <img src="/images/home-banner-bg-05-rotating.jpg" alt=""
-          className='absolute right-45 top-25 w-12 animate-[spin_8s_ease-in-out_infinite]'
+          className='hidden lg:block absolute right-10 top-10 w-10 animate-[spin_8s_ease-in-out_infinite]'
         />
 
-        <div className='flex items-center justify-between px-12 py-15 gap-10'>
+        <div className='max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between px-4 sm:px-6 lg:px-12 py-10 gap-8'>
 
           <div className='flex-2 text-white'>
-            <h2 className='text-3xl font-bold mb-4'>
+            <h2 className='text-2xl sm:text-3xl font-bold mb-4'>
               Do You Need Professional Vehicle Wash! We Are Here
             </h2>
             <p>
@@ -152,9 +155,9 @@ const TeamPage = () => {
 
 
 
-            <button className='flex items-center gap-3 bg-white text-orange-500 text-lg font-semibold px-6 py-3 rounded-lg z-10 hover:bg-orange-500 hover:text-white transition'>
+            <Link to="/book" className='flex items-center gap-3 bg-white text-orange-500 text-lg font-semibold px-6 py-3 rounded-lg z-10 hover:bg-orange-500 hover:text-white transition'>
               Book Appointment <FaCalendarDay />
-            </button>
+            </Link>
 
           </div>
 

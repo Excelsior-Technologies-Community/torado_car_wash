@@ -6,25 +6,40 @@ class Booking extends BaseModel {
   }
 
   async createBooking(userId, serviceId, vehicleCategoryId, bookingDate, bookingTime) {
-    return await this.callProcedure("sp_create_booking", [
-      userId,
-      serviceId,
-      vehicleCategoryId,
-      bookingDate,
-      bookingTime,
-    ]);
+    const [result] = await this.pool.query(
+      `INSERT INTO bookings (user_id, service_id, vehicle_category_id, booking_date, booking_time, status) 
+       VALUES (?, ?, ?, ?, ?, 'Pending')`,
+      [userId, serviceId, vehicleCategoryId, bookingDate, bookingTime]
+    );
+    return { bookingId: result.insertId, message: 'Booking created successfully' };
   }
 
   async getUserBookings(userId) {
-    return await this.callProcedure("sp_get_user_bookings", [userId]);
+    const [rows] = await this.pool.query(
+      `SELECT 
+        b.id, 
+        b.booking_date, 
+        b.booking_time, 
+        b.status,
+        b.created_at,
+        wp.name as service_name,
+        vc.name as vehicle_category
+      FROM bookings b
+      LEFT JOIN wash_packages wp ON b.service_id = wp.id
+      LEFT JOIN vehicle_categories vc ON b.vehicle_category_id = vc.id
+      WHERE b.user_id = ?
+      ORDER BY b.booking_date DESC, b.booking_time DESC`,
+      [userId]
+    );
+    return rows;
   }
 
   async updateStatus(bookingId, newStatus, changedBy) {
-    return await this.callProcedure("sp_update_booking_status", [
-      bookingId,
-      newStatus,
-      changedBy,
-    ]);
+    await this.pool.query(
+      `UPDATE bookings SET status = ? WHERE id = ?`,
+      [newStatus, bookingId]
+    );
+    return { message: 'Booking status updated successfully' };
   }
 
   async getAvailableTimeSlots(date) {

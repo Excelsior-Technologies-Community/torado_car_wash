@@ -12,6 +12,7 @@ sql/
 **/test-system.js
 !/frontend/
 !/backend/
+!/admin/
 
 # 4. Specifically ignore .env and .venv everywhere
 # This works even inside frontend and backend because we un-ignored them above

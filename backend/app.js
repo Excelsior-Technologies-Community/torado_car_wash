@@ -1,5 +1,6 @@
 import express from "express";
 import authRoute from "./routes/authRoute.js";
+import profileRoute from "./routes/profileRoute.js";
 import serviceRoute from "./routes/serviceRoute.js";
 import servicePricingRoute from "./routes/servicePricingRoute.js";
 import washTypeRoute from "./routes/washTypeRoute.js";
@@ -19,6 +20,7 @@ import faqRoute from "./routes/faqRoute.js";
 import contactRoute from "./routes/contactRoute.js";
 import testimonialRoute from "./routes/testimonialRoute.js";
 import newsletterRoute from "./routes/newsletterRoute.js";
+import contentRoute from "./routes/contentRoute.js";
 
 import cors from "cors";
 
@@ -26,7 +28,7 @@ const app = express();
 
 // Configure CORS with specific origins
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: ["http://localhost:5173", "http://localhost:5174"],
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -42,6 +44,7 @@ app.get("/", (req, res) => {
 
 //userRoutes
 app.use("/api/users", authRoute);
+app.use("/api/users", profileRoute);
 
 //service routes
 app.use("/api/services", serviceRoute);
@@ -87,5 +90,8 @@ app.use("/api/testimonials", testimonialRoute);
 
 //newsletter routes
 app.use("/api/newsletter", newsletterRoute);
+
+//content routes
+app.use("/api/content", contentRoute);
 
 export default app;

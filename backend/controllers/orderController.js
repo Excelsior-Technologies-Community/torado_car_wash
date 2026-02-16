@@ -64,6 +64,24 @@ export const getOrders = async (req, res) => {
   }
 };
 
+export const getAllOrders = async (req, res) => {
+  try {
+    const [orders] = await pool.query(
+      `SELECT o.*, u.name as user_name, u.email as user_email
+       FROM orders o
+       LEFT JOIN users u ON o.user_id = u.id
+       ORDER BY o.created_at DESC`
+    );
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 export const getOrderDetails = async (req, res) => {
   try {
     const { id } = req.params;
@@ -81,6 +99,7 @@ export const getOrderDetails = async (req, res) => {
       data: order
     });
   } catch (error) {
+    console.error('Order details error:', error);
     res.status(500).json({
       success: false,
       message: error.message
@@ -94,16 +113,19 @@ export const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
     
-    const currentOrder = await Order.findById(id);
+    const [currentOrder] = await connection.query(
+      'SELECT * FROM orders WHERE id = ?',
+      [id]
+    );
     
-    if (!currentOrder) {
+    if (!currentOrder || currentOrder.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Order not found"
       });
     }
     
-    const oldStatus = currentOrder.status;
+    const oldStatus = currentOrder[0].status;
     
     await connection.beginTransaction();
     
@@ -121,7 +143,10 @@ export const updateOrderStatus = async (req, res) => {
       }
     }
     
-    await Order.update(id, { status });
+    await connection.query(
+      'UPDATE orders SET status = ? WHERE id = ?',
+      [status, id]
+    );
     
     await connection.commit();
 
@@ -131,6 +156,7 @@ export const updateOrderStatus = async (req, res) => {
     });
   } catch (error) {
     await connection.rollback();
+    console.error(error);
     res.status(500).json({
       success: false,
       message: error.message

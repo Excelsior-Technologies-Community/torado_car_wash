@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 
 const BlogSidebar = ({ 
   categories, 
@@ -38,13 +39,13 @@ const BlogSidebar = ({
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="px-3 py-2 text-gray-500 hover:text-orange-500 transition"
+                className="px-3 py-2 text-gray-500 text-xl hover:text-orange-500 transition"
               >
                 ✕
               </button>
             )}
             <button type="submit" className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition">
-              <i className="fa fa-search"></i>
+              <FaSearch />
             </button>
           </div>
         </form>

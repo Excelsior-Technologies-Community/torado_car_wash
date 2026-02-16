@@ -17,9 +17,10 @@ const BlogSwiper = () => {
   const fetchBlogs = async () => {
     try {
       const response = await blogsApi.getBlogs({ limit: 8 });
-      setBlogs(response.data.data);
+      setBlogs(response.data || []);
     } catch (error) {
       console.error('Error fetching blogs:', error);
+      setBlogs([]);
     }
   };
 
@@ -47,7 +48,7 @@ const BlogSwiper = () => {
             1280: { slidesPerView: 4 }
           }}
         >
-          {blogs.map(blog => {
+          {blogs && blogs.length > 0 && blogs.map(blog => {
             const imageUrl = blog.featured_image 
               ? `http://localhost:5000/uploads/${blog.featured_image}` 
               : '/images/default-blog.jpg';

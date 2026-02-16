@@ -2,11 +2,13 @@ import jwt from "jsonwebtoken";
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.header("Authorization").replace("Bearer ", "");
+    const authHeader = req.header("Authorization");
 
-    if (!token) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ message: "Access Denied" });
     }
+
+    const token = authHeader.replace("Bearer ", "");
 
     const verified = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -14,7 +16,7 @@ const authMiddleware = async (req, res, next) => {
 
     next();
   } catch (error) {
-    res.status(500).json({ message: "Invalid Token" });
+    res.status(401).json({ message: "Invalid Token" });
   }
 };
 

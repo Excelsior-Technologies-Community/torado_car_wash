@@ -1,4 +1,4 @@
-import api from './axios';
+import api from './axiosConfig';
 
 export const vehicleCategoriesApi = {
   getAll: () => api.get('/vehicle-categories'),

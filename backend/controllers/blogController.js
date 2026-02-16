@@ -59,9 +59,14 @@ export const getBlogs = async (req, res) => {
     const { page = 1, limit = 6, category, tags, search } = req.query;
     const { offset } = getPagination(page, limit);
 
-    let whereConditions = ['b.is_published = 1'];
+    let whereConditions = [];
     let params = [];
-    let joins = ' LEFT JOIN blog_categories bc ON b.category_id = bc.id';
+    let joins = ' LEFT JOIN blog_categories bc ON b.category_id = bc.id LEFT JOIN users u ON b.author_id = u.id';
+
+    // Don't filter by is_published for admin
+    if (req.query.admin !== 'true') {
+      whereConditions.push('b.is_published = 1');
+    }
 
     if (category) {
       whereConditions.push('bc.slug = ?');
@@ -83,7 +88,7 @@ export const getBlogs = async (req, res) => {
     const whereClause = whereConditions.length ? `WHERE ${whereConditions.join(' AND ')}` : '';
 
     const [blogs] = await pool.query(
-      `SELECT DISTINCT b.*, bc.name as category_name, bc.slug as category_slug
+      `SELECT DISTINCT b.*, bc.name as category_name, bc.slug as category_slug, bc.id as category_id, u.name as author_name
        FROM blogs b
        ${joins}
        ${whereClause}
@@ -164,7 +169,7 @@ export const getBlogById = async (req, res) => {
 
 export const updateBlog = async (req, res) => {
   const { id } = req.params;
-  const { title, content, category_id, tags, is_published } = req.body;
+  const { title, content, author_id, category_id, tags, is_published } = req.body;
   const featured_image = req.file ? req.file.filename : null;
 
   try {
@@ -195,6 +200,11 @@ export const updateBlog = async (req, res) => {
     if (content !== undefined) {
       updates.push("content = ?");
       params.push(content);
+    }
+
+    if (author_id !== undefined) {
+      updates.push("author_id = ?");
+      params.push(author_id);
     }
 
     if (category_id !== undefined) {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { blogsApi } from '../api';
 import BlogCard from '../components/blog/BlogCard';
 import BlogSidebar from '../components/blog/BlogSidebar';
@@ -48,10 +48,12 @@ const BlogPage = () => {
         ...(filters.search && { search: filters.search })
       };
       const response = await blogsApi.getBlogs(params);
-      setBlogs(response.data.data);
-      setPagination(response.data.pagination);
+      setBlogs(response.data || []);
+      setPagination(response.pagination || {});
     } catch (error) {
       console.error('Error fetching blogs:', error);
+      setBlogs([]);
+      setPagination({});
     } finally {
       setLoading(false);
     }
@@ -114,9 +116,9 @@ const BlogPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="flex gap-3 mb-8 flex-wrap items-center">
-        <button onClick={() => setView('grid')} className={`px-6 py-2 rounded border transition ${view === 'grid' ? 'bg-orange-500 text-white border-orange-500' : 'bg-white border-gray-300 hover:border-orange-500'}`}>Grid</button>
-        <button onClick={() => setView('left-sidebar')} className={`px-6 py-2 rounded border transition ${view === 'left-sidebar' ? 'bg-orange-500 text-white border-orange-500' : 'bg-white border-gray-300 hover:border-orange-500'}`}>Left Sidebar</button>
-        <button onClick={() => setView('right-sidebar')} className={`px-6 py-2 rounded border transition ${view === 'right-sidebar' ? 'bg-orange-500 text-white border-orange-500' : 'bg-white border-gray-300 hover:border-orange-500'}`}>Right Sidebar</button>
+        <Link to="/blogs/grid" className={`px-6 py-2 rounded border transition ${view === 'grid' ? 'bg-orange-500 text-white border-orange-500' : 'bg-white border-gray-300 hover:border-orange-500'}`}>Grid</Link>
+        <Link to="/blogs/left-sidebar" className={`px-6 py-2 rounded border transition ${view === 'left-sidebar' ? 'bg-orange-500 text-white border-orange-500' : 'bg-white border-gray-300 hover:border-orange-500'}`}>Left Sidebar</Link>
+        <Link to="/blogs/right-sidebar" className={`px-6 py-2 rounded border transition ${view === 'right-sidebar' ? 'bg-orange-500 text-white border-orange-500' : 'bg-white border-gray-300 hover:border-orange-500'}`}>Right Sidebar</Link>
         
         {hasActiveFilters && (
           <button 

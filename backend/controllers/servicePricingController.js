@@ -50,7 +50,7 @@ export const getServicePricing = async (req, res) => {
     const { service_id } = req.params;
 
     const [pricing] = await pool.query(`
-      SELECT svp.*, vc.name as vehicle_category_name, s.title as service_title
+      SELECT svp.*, vc.name as vehicle_category_name, s.name as service_name
       FROM service_vehicle_pricing svp
       JOIN vehicle_categories vc ON svp.vehicle_category_id = vc.id
       JOIN services s ON svp.service_id = s.id
@@ -68,12 +68,12 @@ export const getServicePricing = async (req, res) => {
 export const getAllServicePricing = async (req, res) => {
   try {
     const [pricing] = await pool.query(`
-      SELECT svp.*, vc.name as vehicle_category_name, s.title as service_title
+      SELECT svp.*, vc.name as vehicle_category_name, s.name as service_name
       FROM service_vehicle_pricing svp
       JOIN vehicle_categories vc ON svp.vehicle_category_id = vc.id
       JOIN services s ON svp.service_id = s.id
       WHERE vc.is_active = TRUE AND s.is_active = TRUE
-      ORDER BY s.title, vc.name
+      ORDER BY s.name, vc.name
     `);
 
     res.json(pricing);

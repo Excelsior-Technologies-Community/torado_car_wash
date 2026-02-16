@@ -1,4 +1,4 @@
-import api from './axios';
+import api from './axiosConfig';
 
 export const washTypesApi = {
   getAll: () => api.get('/wash-types'),

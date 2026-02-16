@@ -5,22 +5,25 @@ class Product extends BaseModel {
     super("products");
   }
 
-  async getProductWithImages(productId) {
+  async getProductWithImages(productId, options = {}) {
+    const { includeInactive = false } = options;
+    const activeClause = includeInactive ? "" : "AND p.is_active = 1";
+
     const [rows] = await this.pool.query(
       `SELECT p.*, pc.name as category_name,
        GROUP_CONCAT(pi.image_path) as images
        FROM products p
        LEFT JOIN product_categories pc ON p.category_id = pc.id
        LEFT JOIN product_images pi ON p.id = pi.product_id
-       WHERE p.id = ? AND p.is_active = 1
+       WHERE p.id = ? ${activeClause}
        GROUP BY p.id`,
       [productId]
     );
     return rows[0];
   }
 
-  async getProducts(filters = {}, limit = 10, offset = 0) {
-    let whereClause = "WHERE p.is_active = 1";
+  buildProductsWhereClause(filters = {}, includeInactive = false) {
+    let whereClause = includeInactive ? "WHERE 1=1" : "WHERE p.is_active = 1";
     const params = [];
 
     if (filters.category_id) {
@@ -32,6 +35,13 @@ class Product extends BaseModel {
       whereClause += " AND (p.name LIKE ? OR p.description LIKE ?)";
       params.push(`%${filters.search}%`, `%${filters.search}%`);
     }
+
+    return { whereClause, params };
+  }
+
+  async getProducts(filters = {}, limit = 10, offset = 0, options = {}) {
+    const { includeInactive = false } = options;
+    const { whereClause, params } = this.buildProductsWhereClause(filters, includeInactive);
 
     const [rows] = await this.pool.query(
       `SELECT p.*, pc.name as category_name,
@@ -47,6 +57,19 @@ class Product extends BaseModel {
     );
 
     return rows;
+  }
+
+  async countProducts(filters = {}, options = {}) {
+    const { includeInactive = false } = options;
+    const { whereClause, params } = this.buildProductsWhereClause(filters, includeInactive);
+    const [rows] = await this.pool.query(
+      `SELECT COUNT(DISTINCT p.id) as total
+       FROM products p
+       LEFT JOIN product_categories pc ON p.category_id = pc.id
+       ${whereClause}`,
+      params
+    );
+    return rows[0]?.total || 0;
   }
 
   async addImages(productId, imagePaths) {

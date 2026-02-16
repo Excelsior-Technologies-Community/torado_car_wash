@@ -1,9 +1,8 @@
-import api from './axios';
+import api from './axiosConfig'
 
 export const cartApi = {
-  add: (data) => api.post('/cart', data),
-  get: () => api.get('/cart'),
-  update: (id, data) => api.put(`/cart/${id}`, data),
-  remove: (id) => api.delete(`/cart/${id}`),
-  clear: () => api.delete('/cart'),
-};
+    add: (product_id, quantity = 1) => api.post('/cart', { product_id, quantity }),
+    getAll: () => api.get('/cart'),
+    update: (id, quantity) => api.put(`/cart/${id}`, { quantity }),
+    remove: (id) => api.delete(`/cart/${id}`)
+}

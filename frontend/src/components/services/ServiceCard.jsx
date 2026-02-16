@@ -1,14 +1,15 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ServiceCard = ({ service }) => {
   const hasImage = service.image;
-  
+
   return (
-    <div className="rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all cursor-pointer group bg-white relative overflow-hidden">
-      
+    <div className="rounded-2xl shadow-xl p-8 hover:shadow-4xl transition-all cursor-pointer group bg-white relative overflow-hidden">
+
       {/* Background Image - Shows on Hover */}
       {hasImage && (
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center opacity-0 group-hover:opacity-100 transition-opacity duration-300  "
           style={{
             backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(http://localhost:5000/uploads/${service.image})`
@@ -38,9 +39,9 @@ const ServiceCard = ({ service }) => {
         </p>
 
         {/* Learn More Link */}
-        <button className="font-semibold hover:underline text-blue-600 group-hover:text-white transition-colors">
+        <Link to={`/services/${service.id}`} className="font-semibold hover:underline text-blue-600 group-hover:text-white transition-colors">
           Learn more
-        </button>
+        </Link>
       </div>
     </div>
   );

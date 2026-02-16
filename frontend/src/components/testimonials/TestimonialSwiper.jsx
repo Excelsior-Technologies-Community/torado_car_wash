@@ -4,15 +4,15 @@ import { Navigation, Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import { FaQuoteRight, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-import axios from 'axios'
+import { testimonialsApi } from '../../api'
 import BrandSwiper from '../BrandSwiper'
 
 function TestimonialSwiper() {
     const [testimonials, setTestimonials] = useState([])
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/testimonials/approved?limit=10')
-            .then(res => setTestimonials(res.data.testimonials || res.data))
+        testimonialsApi.getApproved({ limit: 10 })
+            .then(res => setTestimonials(res.testimonials || []))
             .catch(err => console.error(err))
     }, [])
 

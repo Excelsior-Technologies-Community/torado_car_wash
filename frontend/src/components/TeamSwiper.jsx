@@ -12,8 +12,14 @@ function TeamSwiper() {
 
   useEffect(() => {
     teamApi.getTeamMembers({ limit: 20 })
-      .then(res => setTeamMembers(res.data.data))
-      .catch(err => console.error(err));
+      .then(res => {
+        const data = res.data || []
+        setTeamMembers(data)
+      })
+      .catch(err => {
+        console.error(err)
+        setTeamMembers([])
+      });
   }, []);
 
   return (
@@ -51,7 +57,7 @@ function TeamSwiper() {
           1024: { slidesPerView: 4 },
         }}
       >
-        {teamMembers.map((member) => (
+        {teamMembers && teamMembers.length > 0 && teamMembers.map((member) => (
           <SwiperSlide key={member.id}>
             <div className='bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition group'>
               <div className='relative overflow-hidden'>

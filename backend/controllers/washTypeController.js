@@ -31,14 +31,9 @@ export const getAllWashTypes = async (req, res) => {
       "SELECT * FROM wash_types WHERE is_active = TRUE",
     );
 
+    // Wash types don't have direct features, return empty array
     for (let washType of washTypes) {
-      const [features] = await pool.query(
-        `SELECT f.* FROM features f
-        JOIN wash_type_features wtf ON f.id = wtf.feature_id
-        WHERE wtf.wash_type_id = ? AND f.is_active = TRUE`,
-        [washType.id],
-      );
-      washType.features = features;
+      washType.features = [];
     }
 
     res.json(washTypes);
@@ -63,12 +58,12 @@ export const createFeature = async (req, res) => {
 
 export const addFeatureToWashType = async (req, res) => {
   try {
-    const { wash_type_id, feature_id } = req.body;
+    const { wash_package_id, feature_id } = req.body;
     await pool.query(
-      "INSERT INTO wash_type_features (wash_type_id, feature_id) VALUES (?, ?)",
-      [wash_type_id, feature_id],
+      "INSERT INTO wash_package_features (wash_package_id, feature_id) VALUES (?, ?)",
+      [wash_package_id, feature_id],
     );
-    res.status(201).json({ message: "Feature added to wash type" });
+    res.status(201).json({ message: "Feature added to wash package" });
   } catch (error) {
     res.status(500).json({ message: "Failed to add feature" });
   }
@@ -140,12 +135,12 @@ export const deleteFeature = async (req, res) => {
 
 export const removeFeatureFromWashType = async (req, res) => {
   try {
-    const { wash_type_id, feature_id } = req.body;
+    const { wash_package_id, feature_id } = req.body;
     await pool.query(
-      "DELETE FROM wash_type_features WHERE wash_type_id = ? AND feature_id = ?",
-      [wash_type_id, feature_id],
+      "DELETE FROM wash_package_features WHERE wash_package_id = ? AND feature_id = ?",
+      [wash_package_id, feature_id],
     );
-    res.json({ message: "Feature removed from wash type" });
+    res.json({ message: "Feature removed from wash package" });
   } catch (error) {
     res.status(500).json({ message: "Failed to remove feature" });
   }

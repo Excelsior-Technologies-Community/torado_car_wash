@@ -11,7 +11,8 @@ export const addToWishlist = async (req, res) => {
     );
 
     const [wishlist] = await pool.query(
-      `SELECT w.*, p.name, p.price 
+      `SELECT w.*, p.name, p.price,
+       (SELECT image_path FROM product_images WHERE product_id = p.id LIMIT 1) as image
        FROM wishlists w 
        JOIN products p ON w.product_id = p.id 
        WHERE w.user_id = ? AND w.product_id = ?`,
@@ -36,7 +37,8 @@ export const getWishlist = async (req, res) => {
     const user_id = req.user.id;
 
     const [items] = await pool.query(
-      `SELECT w.*, p.name, p.price 
+      `SELECT w.*, p.name, p.price,
+       (SELECT image_path FROM product_images WHERE product_id = p.id LIMIT 1) as image
        FROM wishlists w 
        JOIN products p ON w.product_id = p.id 
        WHERE w.user_id = ?`,

@@ -3,14 +3,14 @@ import { FaQuoteRight, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
-import axios from 'axios';
+import { testimonialsApi } from '../../api';
 
 const SingleTestimonialSwiper = () => {
     const [testimonials, setTestimonials] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/testimonials/approved?limit=3')
-            .then(res => setTestimonials(res.data.testimonials || []))
+        testimonialsApi.getApproved({ limit: 10 })
+            .then(res => setTestimonials(res.testimonials || []))
             .catch(err => console.error(err));
     }, []);
 
@@ -45,9 +45,9 @@ const SingleTestimonialSwiper = () => {
                                 <img
                                     src={`http://localhost:5000/uploads/${testimonial.image}`}
                                     alt={testimonial.name}
-                                    className='w-48 h-48 rounded-full object-cover border-4 border-blue-500 relative z-10'
+                                    className='w-48 h-48 rounded-full object-cover border-4 border-blue-500 relative z-10 ml-5'
                                 />
-                                <div className='absolute bottom-5 left-0 text-orange-500 text-6xl opacity-100 z-50'>
+                                <div className='absolute bottom-8 left-0 text-orange-500 text-6xl opacity-100 z-50'>
                                     <FaQuoteRight className='rotate-180' />
                                 </div>
                             </div>

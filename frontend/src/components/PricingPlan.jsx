@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FaShieldAlt, FaStar, FaGem, FaCheck, FaClock, FaArrowRight } from 'react-icons/fa';
+import { vehicleCategoriesApi, washPackagesApi } from '../api';
 
 const PricingPlan = () => {
   const [vehicleCategories, setVehicleCategories] = useState([]);
@@ -13,10 +15,10 @@ const PricingPlan = () => {
 
   const fetchVehicleCategories = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/vehicle-categories');
-      const data = await response.json();
-      setVehicleCategories(data);
-      if (data.length > 0) setSelectedVehicle(data[0].id);
+      const response = await vehicleCategoriesApi.getAll();
+      const categories = Array.isArray(response) ? response : (response.data || []);
+      setVehicleCategories(categories);
+      if (categories.length > 0) setSelectedVehicle(categories[0].id);
     } catch (error) {
       console.error('Error fetching vehicle categories:', error);
     }
@@ -24,9 +26,8 @@ const PricingPlan = () => {
 
   const fetchWashPackages = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/wash-packages');
-      const data = await response.json();
-      setWashPackages(data);
+      const response = await washPackagesApi.getAll();
+      setWashPackages(Array.isArray(response) ? response : (response.data || []));
     } catch (error) {
       console.error('Error fetching wash packages:', error);
     }
@@ -124,12 +125,13 @@ const PricingPlan = () => {
               </div>
 
               {/* Get Started Button */}
-              <button className="w-full flex items-center justify-center gap-2 text-orange-500 font-semibold hover:text-orange-600 transition">
+              <Link to="/book" className="w-full flex items-center justify-center gap-2 text-orange-500 font-semibold hover:text-orange-600 transition">
                 Get Started <FaArrowRight />
-              </button>
+              </Link>
             </div>
           ))}
         </div>
+        
       </div>
     </div>
   );

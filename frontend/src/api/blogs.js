@@ -1,4 +1,4 @@
-import api from './axios';
+import api from './axiosConfig';
 
 export const blogsApi = {
   getBlogs: (params) => api.get('/blogs', { params }),

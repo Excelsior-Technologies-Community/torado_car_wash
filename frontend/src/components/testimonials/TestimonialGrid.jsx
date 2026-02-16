@@ -3,7 +3,7 @@ import { FaQuoteRight, FaChevronLeft, FaChevronRight, FaCalendarDay } from 'reac
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
-import axios from 'axios'
+import { testimonialsApi } from '../../api'
 import SingleTestimonialSwiper from './SingleTestimonialSwiper'
 
 function TestimonialGrid() {
@@ -12,10 +12,10 @@ function TestimonialGrid() {
     const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/api/testimonials/approved?page=${currentPage}&limit=6`)
+        testimonialsApi.getApproved({ page: currentPage, limit: 6 })
             .then(res => {
-                setTestimonials(res.data.testimonials || [])
-                setPagination(res.data.pagination || {})
+                setTestimonials(res.testimonials || [])
+                setPagination(res.pagination || {})
             })
             .catch(err => console.error(err))
     }, [currentPage])
@@ -30,20 +30,20 @@ function TestimonialGrid() {
 
             <SingleTestimonialSwiper />
 
-            <div className='relative  bg-[#681515] lg:min-h-84 mb-12'>
+            <div className='relative bg-[#681515] mb-12 overflow-hidden'>
 
                 <img src="/images/home-banner-bg-02.jpg" alt=""
-                    className='absolute w-15 right-90 bottom-10 animate-[bounce_3s_ease-in-out_infinite]'
+                    className='hidden lg:block absolute w-12 right-20 bottom-6 animate-[bounce_3s_ease-in-out_infinite]'
                 />
 
                 <img src="/images/home-banner-bg-05-rotating.jpg" alt=""
-                    className='absolute right-45 top-25 w-12 animate-[spin_8s_ease-in-out_infinite]'
+                    className='hidden lg:block absolute right-10 top-10 w-10 animate-[spin_8s_ease-in-out_infinite]'
                 />
 
-                <div className='flex items-center justify-between px-12 py-15 gap-10'>
+                <div className='max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between px-4 sm:px-6 lg:px-12 py-10 gap-8'>
 
                     <div className='flex-2 text-white'>
-                        <h2 className='text-3xl font-bold mb-4'>
+                        <h2 className='text-2xl sm:text-3xl font-bold mb-4'>
                             Do You Need Professional Vehicle Wash! We Are Here
                         </h2>
                         <p>

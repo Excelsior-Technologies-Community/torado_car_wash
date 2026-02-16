@@ -226,3 +226,21 @@ export const setPackagePricing = async (req, res) => {
     res.status(500).json({ message: "Failed to set pricing" });
   }
 };
+
+export const deletePackagePricing = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await pool.query(
+      "DELETE FROM wash_package_vehicle_pricing WHERE id = ?",
+      [id]
+    );
+
+    if (!result.affectedRows) {
+      return res.status(404).json({ message: "Pricing entry not found" });
+    }
+
+    res.json({ message: "Pricing deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete pricing" });
+  }
+};

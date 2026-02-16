@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
 const BlogCard = ({ blog }) => {
-  const imageUrl = blog.featuorange_image 
-    ? `http://localhost:5000/uploads/${blog.featuorange_image}` 
+  const imageUrl = blog.featured_image 
+    ? `http://localhost:5000/uploads/${blog.featured_image}` 
     : '/images/default-blog.jpg';
 
   const formatDate = (dateString) => {
